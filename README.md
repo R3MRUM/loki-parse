@@ -11,6 +11,8 @@ Finally, there is an issue with the code used for sniffing network traffic where
 
 This issue does not seem to occur within saved PCAPs so, if you receive this error, try saving the network traffic into a pcap file and rerunning loki-parse on the pcap.
 
+I've provided <b>loki-bot_network_traffic.pcap</b> as an example pcap for you to play with.
+
 # Example Output
 <b>$ sudo ./loki_parse.py</b>
 Sniffing PCAPS from the wire
