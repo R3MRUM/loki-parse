@@ -11,6 +11,8 @@ Finally, there is an issue with the code used for sniffing network traffic where
 
 This issue does not seem to occur within saved PCAPs so, if you receive this error, try saving the network traffic into a pcap file and rerunning loki-parse on the pcap.
 
+If the script is able to successfully decompress the data within the packet, this data is simply dumped to the screen (not in JSON format). I plan to address this in later versions.
+
 I've provided <b>loki-bot_network_traffic.pcap</b> as an example pcap for you to play with.
 
 # Example Output
