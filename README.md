@@ -1,5 +1,5 @@
 # loki-parse
-A python script that can detect and parse loki-bot (malware) related network traffic. This script can be helpful to DFIR analysts and security researchers who want to know what data is being exfiltrated to the C2, bot tracking, etc...
+A python script that can detect and parse loki-bot (malware) related network traffic between a compromised host and a C2 server. This script can be helpful to DFIR analysts and security researchers who want to know what data is being exfiltrated to the C2, bot tracking, etc...
 
 This script can either sniff the wire directly (no switch) or read in a PCAP of network traffic (using --pcap $pcap_file) . When the script detects loki-bot related network traffic, it will dump out the data contained within the packets out to the screen in JSON format.
 
