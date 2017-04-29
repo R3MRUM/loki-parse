@@ -20,32 +20,43 @@ I've provided <b>loki-bot_network_traffic.pcap</b> as an example pcap for you to
 Sniffing PCAPS from the wire
 ```json
 {
-    "64bit OS": false, 
-    "Bot ID (0)": "XXXXX11111", 
-    "Built-In Admin": true, 
-    "Compressed Application/Credential Data Size (Bytes)": 2310, 
-    "Data Compressed": true, 
-    "Decompressed Application/Credential Data": "ERROR: Incomplete Packet Detected", 
-    "Domain Hostname (1)": "REMWorkstation", 
-    "First Transmission": true, 
-    "Hidden File [Hash Database]": "%APPDATA%\\C98066\\6B250D.hdb", 
-    "Hidden File [Keylogger Database]": "%APPDATA%\\C98066\\6B250D.kdb", 
-    "Hidden File [Lock File]": "%APPDATA%\\C98066\\6B250D.lck", 
-    "Hidden File [Malware Exe]": "%APPDATA%\\C98066\\6B250D.exe", 
-    "Hostname (1)": "REMWORKSTATION", 
-    "Local Admin": true, 
-    "Mutex (1)": "B7E1C2CC98066B250DDB2123", 
-    "Operating System": "Windows 8.1 Workstation", 
-    "Original Application/Credential Data Size (Bytes)": 8545, 
-    "Packet Info - Data Transmission Time": "2017-04-28T17:00:55.331980", 
-    "Packet Info - Destination IP": "185.141.27.187", 
-    "Packet Info - Destination Port": 80, 
-    "Packet Info - Source IP": "172.16.0.130", 
-    "Packet Info - Source Port": 49401, 
-    "Payload Type": "Application/Credential Data", 
-    "Screen Resolution": "1920x1080", 
-    "Unique Key": "oKUl1", 
-    "User Name (1)": "REM", 
-    "Version": 1.8
+    "Compromised Host/User Data": {
+        "Compressed Application/Credential Data Size (Bytes)": 2310, 
+        "Data Compressed": true, 
+        "Original Application/Credential Data Size (Bytes)": 8545
+    }, 
+    "Compromised Host/User Description": {
+        "64bit OS": false, 
+        "Built-In Admin": true, 
+        "Domain Hostname (1)": "REMWorkstation", 
+        "Hostname (1)": "REMWORKSTATION", 
+        "Local Admin": true, 
+        "Operating System": "Windows 8.1 Workstation", 
+        "Screen Resolution": "3440x1440", 
+        "User Name (1)": "REM"
+    }, 
+    "Malware Artifacts/IOCs": {
+        "Bot ID (0)": "XXXXX11111", 
+        "Loki-Bot Version": 1.8, 
+        "Mutex (1)": "B7E1C2CC98066B250DDB2123", 
+        "Potential Hidden File [Hash Database]": "%APPDATA%\\C98066\\6B250D.hdb", 
+        "Potential Hidden File [Keylogger Database]": "%APPDATA%\\C98066\\6B250D.kdb", 
+        "Potential Hidden File [Lock File]": "%APPDATA%\\C98066\\6B250D.lck", 
+        "Potential Hidden File [Malware Exe]": "%APPDATA%\\C98066\\6B250D.exe", 
+        "Unique Key": "g5cy2", 
+        "User-Agent String": "Mozilla/4.08 (Charon; Inferno)"
+    }, 
+    "Network": {
+        "Data Transmission Time": "2017-04-27T15:03:20.921806", 
+        "Destination Host": "185.141.27.187", 
+        "Destination IP": "185.141.27.187", 
+        "Destination Port": 80, 
+        "First Transmission": true, 
+        "HTTP Method": "POST", 
+        "HTTP URI": "/danielsden/ver.php", 
+        "Source IP": "172.16.0.130", 
+        "Source Port": 49344, 
+        "Traffic Purpose": "Exfiltrate Application/Credential Data"
+    }
 }
 ```
