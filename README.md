@@ -17,6 +17,7 @@ I've provided <b>loki-bot_network_traffic.pcap</b> as an example pcap for you to
 
 # Example Output
 <b>$ sudo ./loki_parse.py</b>
+
 Sniffing PCAPS from the wire
 ```json
 {
