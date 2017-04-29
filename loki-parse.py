@@ -96,7 +96,7 @@ def parse_standard_payload(lb_payload):
 	if isLocalAdmin == 1:
 		lb['Local Admin'] = True
 	else:
-		lb['Local Admin'] = Galse
+		lb['Local Admin'] = False
 
 	isBuiltInAdmin = unpack("h", lb_payload.read(2))[0]
 
