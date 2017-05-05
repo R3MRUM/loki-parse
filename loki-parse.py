@@ -20,6 +20,15 @@ parsed_payload['Compromised Host/User Description'] = {}
 parsed_payload['Compromised Host/User Data'] = {}
 parsed_payload['Malware Artifacts/IOCs'] = {}
 
+
+def getString(stream):
+	wide = unpack("h", stream.read(2))[0]
+	length = unpack("i", stream.read(4))[0]
+	if wide == 0:
+		return ''.join(unpack("s"*length, stream.read(length)))
+	else:
+		return ''.join(map(chr,unpack("h"*(length/2), stream.read(length))))
+			
 def isCompletedSession(packet):
 	packet_key_name = '%s:%s --> %s' % (packet[IP].src,packet[IP].sport, packet[IP].dst)
         packet_queue[packet_key_name].append(packet)
@@ -74,21 +83,11 @@ def isLokiBotTraffic(http_headers):
 
 def parse_standard_payload(lb_payload):
 	lb={}
-	ID = unpack("h", lb_payload.read(2))[0]
-	lb_bot_id_strlen = unpack("i", lb_payload.read(4))[0]
-	parsed_payload['Malware Artifacts/IOCs'].update({'Bot ID (%d)' % ID: ''.join(unpack("s"*lb_bot_id_strlen, lb_payload.read(lb_bot_id_strlen)))})
 
-	ID = unpack("h", lb_payload.read(2))[0]
-	lb_username_len = unpack("i", lb_payload.read(4))[0]
-	parsed_payload['Compromised Host/User Description'].update({'User Name (%d)' % ID: ''.join(map(chr,unpack("h"*(lb_username_len/2), lb_payload.read(lb_username_len))))})
-	
-	ID = unpack("h", lb_payload.read(2))[0]
-	lb_hostname_len = unpack("i", lb_payload.read(4))[0]
-	parsed_payload['Compromised Host/User Description'].update({'Hostname (%d)' % ID: ''.join(map(chr,unpack("h"*(lb_hostname_len/2), lb_payload.read(lb_hostname_len))))})
-
-	ID = unpack("h", lb_payload.read(2))[0]
-	lb_domainhostname_len = unpack("i", lb_payload.read(4))[0]
-	parsed_payload['Compromised Host/User Description'].update({'Domain Hostname (%d)' % ID: ''.join(map(chr,unpack("h"*(lb_domainhostname_len/2), lb_payload.read(lb_domainhostname_len))))})
+	parsed_payload['Malware Artifacts/IOCs'].update({'Binary ID': getString(lb_payload)})
+	parsed_payload['Compromised Host/User Description'].update({'User Name':getString(lb_payload)})
+	parsed_payload['Compromised Host/User Description'].update({'Hostname': getString(lb_payload)})
+	parsed_payload['Compromised Host/User Description'].update({'Domain Hostname': getString(lb_payload)})
 
 	screen_width = unpack("i", lb_payload.read(4))[0]
 	screen_heigth = unpack("i", lb_payload.read(4))[0]
@@ -97,6 +96,7 @@ def parse_standard_payload(lb_payload):
 
 
 	isLocalAdmin = unpack("h", lb_payload.read(2))[0]
+	
 	if isLocalAdmin == 1:
 		parsed_payload['Compromised Host/User Description'].update({'Local Admin': True})
 	else:
@@ -143,16 +143,22 @@ def parse_type27(lb_payload):
 	else:
 		parsed_payload['Compromised Host/User Data'].update({'Data Compressed': False})
 
-	placeholder1 = unpack("h", lb_payload.read(2))[0]
-	placeholder2 = unpack("h", lb_payload.read(2))[0]
-	placeholder3 = unpack("h", lb_payload.read(2))[0]
+	parsed_payload['Compromised Host/User Data'].update({'Compression Type': unpack("h", lb_payload.read(2))[0]})
+	
+	encoded = unpack("h", lb_payload.read(2))[0]
+	if encoded ==1:
+		parsed_payload['Compromised Host/User Data'].update({'Encoded': True})
+	elif encoded ==0:
+		parsed_payload['Compromised Host/User Data'].update({'Encoded': False})
+	else:
+		parsed_payload['Compromised Host/User Data'].update({'Encoded': encoded})
+		
+	parsed_payload['Compromised Host/User Data'].update({'Encoding': unpack("h", lb_payload.read(2))[0]})
 
 	parsed_payload['Compromised Host/User Data'].update({'Original Application/Credential Data Size (Bytes)': unpack("i", lb_payload.read(4))[0]})
 
-	ID = unpack("h", lb_payload.read(2))[0]
-	mutex_strlen = unpack("i", lb_payload.read(4))[0]
-	mutex = ''.join(map(chr,unpack("h"*(mutex_strlen/2), lb_payload.read(mutex_strlen))))
-	parsed_payload['Malware Artifacts/IOCs'].update({'Mutex (%d)' % ID: mutex})
+	mutex = getString(lb_payload) 
+	parsed_payload['Malware Artifacts/IOCs'].update({'Mutex': mutex})
 	parsed_payload['Malware Artifacts/IOCs'].update({'Potential Hidden File [Malware Exe]': '%%APPDATA%%\%s\%s.exe' % ( mutex[7:13], mutex[12:18])})
 	parsed_payload['Malware Artifacts/IOCs'].update({'Potential Hidden File [Hash Database]': '%%APPDATA%%\%s\%s.hdb' % ( mutex[7:13], mutex[12:18])})
 	parsed_payload['Malware Artifacts/IOCs'].update({'Potential Hidden File [Keylogger Database]': '%%APPDATA%%\%s\%s.kdb' % ( mutex[7:13], mutex[12:18])})
@@ -181,23 +187,31 @@ def parse_type27(lb_payload):
 
 def parse_type28(lb_payload):
 	lb_payload = parse_standard_payload(lb_payload)
-	ID = unpack("h", lb_payload.read(2))[0]
-	mutex_strlen = unpack("i", lb_payload.read(4))[0]
-	parsed_payload['Malware Artifacts/IOCs'].update({'Mutex (%d)' % ID: ''.join(map(chr,unpack("h"*(mutex_strlen/2), lb_payload.read(mutex_strlen))))})
+	parsed_payload['Malware Artifacts/IOCs'].update({'Mutex': getString(lb_payload)})
 
 
 def parse_type2b(lb_payload):
 
-	placeholder1 = unpack("h", lb_payload.read(2))[0]
-	placeholder2 = unpack("h", lb_payload.read(2))[0]
-	placeholder3 = unpack("h", lb_payload.read(2))[0]
-	placeholder4 = unpack("h", lb_payload.read(2))[0]
+	compressed = unpack("h", lb_payload.read(2))[0]
+
+	if compressed == 1:
+		parsed_payload['Compromised Host/User Data'].update({'Data Compressed': True})
+	else:
+		parsed_payload['Compromised Host/User Data'].update({'Data Compressed': False})
+
+	parsed_payload['Compromised Host/User Data'].update({'Compression Type': unpack("h", lb_payload.read(2))[0]})
 	
+	encoded = unpack("h", lb_payload.read(2))[0]
+	if encoded ==1:
+		parsed_payload['Compromised Host/User Data'].update({'Encoded': True})
+	elif encoded ==0:
+		parsed_payload['Compromised Host/User Data'].update({'Encoded': False})
+	else:
+		parsed_payload['Compromised Host/User Data'].update({'Encoded': encoded})
+	
+	parsed_payload['Compromised Host/User Data'].update({'Encoding': unpack("h", lb_payload.read(2))[0]})
 	parsed_payload['Compromised Host/User Data'].update({'Original Keylogger Data Size': unpack("i", lb_payload.read(4))[0]})
-	
-	ID = unpack("h", lb_payload.read(2))[0]
-	mutex_strlen = unpack("i", lb_payload.read(4))[0]
-	parsed_payload['Malware Artifacts/IOCs'].update({'Mutex (%d)' % ID: ''.join(map(chr,unpack("h"*(mutex_strlen/2), lb_payload.read(mutex_strlen))))})
+	parsed_payload['Malware Artifacts/IOCs'].update({'Mutex': getString(lb_payload)})
 	
 	unique_key_len = unpack("i", lb_payload.read(4))[0]
 	parsed_payload['Malware Artifacts/IOCs'].update({'Unique Key': ''.join(unpack("s"*unique_key_len, lb_payload.read(unique_key_len)))})
@@ -418,7 +432,6 @@ def parse_lokibot_payload(lb_payload):
 	parsed_payload['Malware Artifacts/IOCs'].update({'Loki-Bot Version': float(unpack("h", lb_payload.read(2))[0])/10})
 	lb_payload_type = unpack("h", lb_payload.read(2))[0]
 	if lb_payload_type == 0x27:
-		#print "Application/Credential payload detected"
 		parsed_payload['Network'].update({'Traffic Purpose': "Exfiltrate Application/Credential Data"})
 		parse_type27(lb_payload)
 	elif lb_payload_type == 0x28:
@@ -427,6 +440,14 @@ def parse_lokibot_payload(lb_payload):
 	elif lb_payload_type == 0x2b:
 		parsed_payload['Network'].update({'Traffic Purpose': "Exfiltrate Keylogger Data"})
 		parse_type2b(lb_payload)
+	elif lb_payload_type == 0x26:
+		parsed_payload['Network'].update({'Traffic Purpose': "Exfiltrate Cryptocurrency Wallet"})
+	elif lb_payload_type == 0x29:
+		parsed_payload['Network'].update({'Traffic Purpose': "Exfiltrate Files"})
+	elif lb_payload_type == 0x2a:
+		parsed_payload['Network'].update({'Traffic Purpose': "Exfiltrate POS Data"})
+	elif lb_payload_type == 0x2c:
+		parsed_payload['Network'].update({'Traffic Purpose': "Exfiltrate Screenshots"})		
 	
 	
 def process_packets(packet):
@@ -434,7 +455,7 @@ def process_packets(packet):
 	packet_key_name = '%s:%s --> %s' % (packet[IP].src,packet[IP].sport, packet[IP].dst)
 	if isCompletedSession(packet):
                 http_header, http_payload = extractHeaderAndPayload(packet_queue[packet_key_name])
-		#print "header and payload extracted"
+
 		if isLokiBotTraffic(http_header):
 			parsed_payload['Network'].update({'Source IP': packet[IP].src})
 			parsed_payload['Network'].update({'Source Port': packet[IP].sport})
@@ -473,9 +494,9 @@ if args.pcap:
 	if not os.path.isfile(args.pcap):
 		print "Error: The PCAP file you provided (%s) could not be found" % args.pcap
 		sys.exit(-1)
-	print "Reading PCAP file"
+
 	packets = rdpcap(args.pcap)
-	print "PCAP Read"
+
 	for packet in packets:
 		if TCP in packet:
 			process_packets(packet)
