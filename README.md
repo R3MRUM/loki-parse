@@ -23,23 +23,26 @@ Sniffing PCAPS from the wire
 {
     "Compromised Host/User Data": {
         "Compressed Application/Credential Data Size (Bytes)": 2310, 
+        "Compression Type": 0, 
         "Data Compressed": true, 
+        "Encoded": false, 
+        "Encoding": 0, 
         "Original Application/Credential Data Size (Bytes)": 8545
     }, 
     "Compromised Host/User Description": {
         "64bit OS": false, 
         "Built-In Admin": true, 
-        "Domain Hostname (1)": "REMWorkstation", 
-        "Hostname (1)": "REMWORKSTATION", 
+        "Domain Hostname": "REMWorkstation", 
+        "Hostname": "REMWORKSTATION", 
         "Local Admin": true, 
         "Operating System": "Windows 8.1 Workstation", 
         "Screen Resolution": "3440x1440", 
-        "User Name (1)": "REM"
+        "User Name": "REM"
     }, 
     "Malware Artifacts/IOCs": {
-        "Bot ID (0)": "XXXXX11111", 
+        "Binary ID": "XXXXX11111", 
         "Loki-Bot Version": 1.8, 
-        "Mutex (1)": "B7E1C2CC98066B250DDB2123", 
+        "Mutex": "B7E1C2CC98066B250DDB2123", 
         "Potential Hidden File [Hash Database]": "%APPDATA%\\C98066\\6B250D.hdb", 
         "Potential Hidden File [Keylogger Database]": "%APPDATA%\\C98066\\6B250D.kdb", 
         "Potential Hidden File [Lock File]": "%APPDATA%\\C98066\\6B250D.lck", 
