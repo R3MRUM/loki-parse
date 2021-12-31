@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import logging
 logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
-from scapy.all import *
+from scapy import *
 from collections import defaultdict
 from cStringIO import StringIO
 from struct import unpack
